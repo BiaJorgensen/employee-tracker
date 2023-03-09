@@ -2,6 +2,8 @@
 const inquirer = require('inquirer');
 // Importing mysql2
 const mysql = require('mysql2');
+// Importing console.table
+const table = require('console.table')
 
 // Connecting to database
 const db = mysql.createConnection(
@@ -27,6 +29,7 @@ function init() {
     .then((data) => {const chosenOption = data.options
         if (chosenOption === 'View all departments') {
             console.log(1);
+            
         }
         if (chosenOption === 'View all roles') {
             console.log(2);

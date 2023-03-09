@@ -28,7 +28,8 @@ function init() {
     inquirer.prompt(options)
     .then((data) => {const chosenOption = data.options
         if (chosenOption === 'View all departments') {
-            console.log(1);
+            viewDepts();
+            
             
         }
         if (chosenOption === 'View all roles') {
@@ -68,7 +69,12 @@ function init() {
    
 }
     
-
+function viewDepts() {
+    db.query('SELECT id, name FROM department', (err, results) => {
+        if (err) throw err;
+        console.table(results)
+    })
+}
 
 init()
 module.exports = init

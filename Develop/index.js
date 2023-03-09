@@ -18,61 +18,60 @@ const db = mysql.createConnection(
 // Questions to se what user would like to do
 const options = {
     type: 'list',
-    name: 'options',
+    name: 'option',
     message: 'What would you like to do?',
     choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role', 'Finish']
 }
 
 
-function init() {
-    inquirer.prompt(options)
-    .then((data) => {const chosenOption = data.options
-        if (chosenOption === 'View all departments') {
-            viewDepts();
-            
-            
+async function init() {
+
+    const chosen = await inquirer.prompt(options)
+  
+        if (chosen.option === 'View all departments') {
+            viewDepts(); 
         }
-        if (chosenOption === 'View all roles') {
+        if (chosen.option === 'View all roles') {
             console.log(2);
-            init()
+            
         }
-        if (chosenOption === 'View all employees') {
+        if (chosen.option === 'View all employees') {
             console.log(3);
-            init()
+            
         }
-        if (chosenOption === 'Add a department') {
+        if (chosen.option === 'Add a department') {
             console.log(4);
-            init()
+            
         }
-        if (chosenOption === 'Add a role') {
+        if (chosen.option === 'Add a role') {
             console.log(5);
-            init()
+            
         }
-        if (chosenOption === 'Add an employee') {
+        if (chosen.option === 'Add an employee') {
             console.log(6);
-            init()
+            
         }
-        if (chosenOption === 'Update an employee role') {
+        if (chosen.option === 'Update an employee role') {
             console.log(7);
            
         }
-        if (chosenOption === 'Finish') {
+        if (chosen.option === 'Finish') {
             console.log('Thank you!');
             process.exit()
         }
 
-
-
-        return(chosenOption); 
-    })
-    
+    }
    
-}
+
     
 function viewDepts() {
     db.query('SELECT id, name FROM department', (err, results) => {
         if (err) throw err;
-        console.table(results)
+        // console.clear();
+        console.log('\n DEPARTMENTS\n');
+        console.table(results);
+        console.log('=====================');
+        init()
     })
 }
 

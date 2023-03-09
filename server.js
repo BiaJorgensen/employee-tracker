@@ -16,3 +16,8 @@ const db = mysql.createConnection(
 );
 
 
+function useDB(choice) {
+if(choice) console.log('OK');
+}
+
+module.exports = useDB

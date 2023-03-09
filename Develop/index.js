@@ -32,7 +32,7 @@ async function init() {
             viewDepts(); 
         }
         if (chosen.option === 'View all roles') {
-            console.log(2);
+            viewRoles()
             
         }
         if (chosen.option === 'View all employees') {
@@ -70,7 +70,16 @@ function viewDepts() {
         // console.clear();
         console.log('\n DEPARTMENTS\n');
         console.table(results);
-        console.log('=====================');
+        init()
+    })
+};
+
+function viewRoles() {
+    db.query('SELECT role.id, role.title, department.name AS department, role.salary  FROM role JOIN department ON role.department_id = department.id', (err, results) => {
+        if (err) throw err;
+        // console.clear();
+        console.log('\n ROLES\n');
+        console.table(results);
         init()
     })
 }

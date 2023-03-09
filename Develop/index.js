@@ -1,4 +1,4 @@
-// Loading Inquirer Package into file
+// Importing Inquirer Package into file
 const inquirer = require('inquirer');
 
 // Questions to se what user would like to do
@@ -12,6 +12,20 @@ const options = {
 
 function init() {
     inquirer.prompt(options)
+    .then((data) => {const chosenOption = data.options
+        return(chosenOption); 
+    })
+    .then((chosenOption) => {
+        if (chosenOption == 'View all departments') {
+            console.log(222);
+            return
+        }
+    })
+    return
 }
+    
+
 
 init()
+module.exports = init
+

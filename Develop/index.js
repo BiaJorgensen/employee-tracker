@@ -36,7 +36,7 @@ async function init() {
             
         }
         if (chosen.option === 'View all employees') {
-            console.log(3);
+            viewEmployees()
             
         }
         if (chosen.option === 'Add a department') {
@@ -82,7 +82,21 @@ function viewRoles() {
         console.table(results);
         init()
     })
-}
+};
+
+function viewEmployees() {
+    db.query(`SELECT employee.id, employee.first_name, employee.last_name, 
+            role.title, role.salary  
+            FROM employee JOIN role ON employee.role_id = role.id
+            `, (err, results) => {
+        if (err) throw err;
+        // console.clear();
+        console.log('\n ROLES\n');
+        console.table(results);
+        init()
+    })
+
+  }
 
 init()
 module.exports = init

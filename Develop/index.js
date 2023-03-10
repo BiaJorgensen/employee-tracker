@@ -132,8 +132,10 @@ async function addRole() {
         }
     ])
 
-    const info = [newRole.new_role, newRole.salary, newRole.department]
-    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?)`, info, (err,results) => {
+    const deptID = await deptNameToID(newRole.department);
+
+    const info = [newRole.new_role, newRole.salary, deptID]
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`, info, (err,results) => {
         if (err) throw err;
                 console.log(`\n Added ${newRole.new_role} to the database\n`);
                 init()
@@ -151,10 +153,23 @@ async function showListOfDepts() {
     });
 };
 
+async function deptNameToID(dept_name) {
+    return new Promise ((resolve, reject) => {
+        db.query(`SELECT id FROM department WHERE name = (?)`, dept_name, (err,results) => {
+            if (err) reject (err);
+            else {
+                const dept_id = results[0].id;
+                resolve (dept_id)
+            }
+        })
+    })
+
+  }
 
 
 
 
+  
 init()
 module.exports = init
 

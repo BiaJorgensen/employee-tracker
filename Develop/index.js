@@ -208,7 +208,6 @@ async function roleTitleToID(role_title) {
             if (err) reject (err);
             else {
                 const role_id = results[0].id;
-                console.log(role_id)
                 resolve (role_id)
             }
         })

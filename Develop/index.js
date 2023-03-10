@@ -192,7 +192,7 @@ async function addEmployee() {
         // }
     ])
 
-    // const roleID = await roleNameToID(newEmployee.role_name);
+    const roleID = await roleTitleToID(newEmployee.role_title);
     // const managerID = await managerNameToID(newEmployee.manager_name);
 
     const info = [newEmployee.first_name, newEmployee.last_name, roleID, managerID]
@@ -216,10 +216,24 @@ async function showListOfRoles() {
     });
 };
 
+async function roleTitleToID(role_title) {
+    return new Promise ((resolve, reject) => {
+        db.query(`SELECT id FROM role WHERE title = (?)`, role_title, (err,results) => {
+            if (err) reject (err);
+            else {
+                const role_id = results[0].id;
+                console.log(role_id)
+                resolve (role_id)
+            }
+        })
+    })
+
+};
 
 
 
+roleTitleToID('Account Manager')
   
-init()
+// init()
 module.exports = init
 

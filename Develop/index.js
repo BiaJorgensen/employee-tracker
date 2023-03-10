@@ -32,16 +32,13 @@ async function init() {
             viewDepts(); 
         }
         if (chosen.option === 'View all roles') {
-            viewRoles()
-            
+            viewRoles()  
         }
         if (chosen.option === 'View all employees') {
             viewEmployees()
-            
         }
         if (chosen.option === 'Add a department') {
-            console.log(4);
-            
+            addDept()  
         }
         if (chosen.option === 'Add a role') {
             console.log(5);
@@ -67,7 +64,6 @@ async function init() {
 function viewDepts() {
     db.query('SELECT id, name FROM department', (err, results) => {
         if (err) throw err;
-        // console.clear();
         console.log('\n DEPARTMENTS\n');
         console.table(results);
         init()
@@ -75,12 +71,13 @@ function viewDepts() {
 };
 
 function viewRoles() {
-    db.query('SELECT role.id, role.title, department.name AS department, role.salary  FROM role JOIN department ON role.department_id = department.id', (err, results) => {
-        if (err) throw err;
-        // console.clear();
-        console.log('\n ROLES\n');
-        console.table(results);
-        init()
+    db.query(`SELECT role.id, role.title, department.name AS department, role.salary
+            FROM role JOIN department ON role.department_id = department.id`, 
+            (err, results) => {
+                if (err) throw err;
+                console.log('\n ROLES\n');
+                console.table(results);
+                init()
     })
 };
 
@@ -90,16 +87,30 @@ function viewEmployees() {
             CONCAT(manager.first_name," ",manager.last_name) AS manager
             FROM employee JOIN role ON employee.role_id = role.id
             LEFT JOIN department ON role.department_id = department.id
-            LEFT JOIN employee manager ON employee.manager_id = manager.id;
-            `, (err, results) => {
-        if (err) throw err;
-        // console.clear();
-        console.log('\n ROLES\n');
-        console.table(results);
-        init()
-    })
+            LEFT JOIN employee manager ON employee.manager_id = manager.id`, 
+            (err, results) => {
+                if (err) throw err;
+                console.log('\n ROLES\n');
+                console.table(results);
+                init()
+            })
+};
 
-  }
+async function addDept() {
+    let newDept = await inquirer.prompt([
+        {
+            name: 'new_dept',
+            type: 'input',
+            message: 'What is the name of the department?'
+        }
+    ])
+    db.query(`INSERT INTO department (name) VALUES (?)`, newDept.new_dept, (err,results) => {
+        if (err) throw err;
+                console.log(`\n Added ${newDept.new_dept} to the database\n`);
+                init()
+    })
+    
+}
 
 init()
 module.exports = init

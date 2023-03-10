@@ -47,8 +47,7 @@ async function init() {
             addEmployee();
         }
         if (chosen.option === 'Update an employee role') {
-            console.log(7);
-           
+            updateEmployeeRole()
         }
         if (chosen.option === 'Finish') {
             console.log('Thank you!');
@@ -165,7 +164,7 @@ async function deptNameToID(dept_name) {
 
 async function addEmployee() {
     const role_title = await showListOfRoles();
-    const manager_name = await showListOfManagers();
+    const manager_name = await showListOfEmployees();
 
     let newEmployee = await inquirer.prompt([
         {
@@ -193,7 +192,7 @@ async function addEmployee() {
     ])
     console.log(newEmployee.role);
     const roleID = await roleTitleToID(newEmployee.role);
-    const managerID = await managerNameToID(newEmployee.manager);
+    const managerID = await employeeNameToID(newEmployee.manager);
 
     const info = [newEmployee.first_name, newEmployee.last_name, roleID, managerID]
 
@@ -230,7 +229,7 @@ async function roleTitleToID(role_title) {
 
 };
 
-async function showListOfManagers() {
+async function showListOfEmployees() {
     return new Promise((resolve, reject) => {
         db.query(`SELECT CONCAT(first_name," ",last_name) FROM employee`, (err,results) => {
             if (err) reject (err);
@@ -241,9 +240,9 @@ async function showListOfManagers() {
     });
 };
 
-async function managerNameToID(manager_name) {
+async function employeeNameToID(name) {
     return new Promise ((resolve, reject) => {
-        const [first_name, last_name] = manager_name.split(' ');
+        const [first_name, last_name] = name.split(' ');
 
         db.query(`SELECT id FROM employee WHERE first_name = (?) AND last_name = (?)`, [first_name, last_name], (err,results) => {
             if (err) reject (err);
@@ -257,6 +256,37 @@ async function managerNameToID(manager_name) {
 
 };
 
+async function updateEmployeeRole() {
+    const employees_name = await showListOfEmployees();
+    const role_title = await showListOfRoles();
+
+    let updateRole = await inquirer.prompt([
+        {
+            name: 'name',
+            type: 'list',
+            message: "Which employe's role would you like to update?",
+            choices: employees_name
+        },
+        {
+            name: 'role',
+            type: 'list',
+            message: "Which role would you like to assign to the selected employee?",
+            choices: role_title
+        }
+    ])
+    
+    
+    const employeeID = await employeeNameToID(updateRole.name);
+    const roleID = await roleTitleToID(updateRole.role);
+
+    const info = [roleID, employeeID]
+
+    db.query(`UPDATE employee SET role_id = (?) WHERE id = (?)`, info, (err,results) => {
+        if (err) throw err;
+                console.log(`\n Updated employee's role\n`);
+                init()
+    })  
+};
 
 
 

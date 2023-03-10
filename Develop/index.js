@@ -41,8 +41,7 @@ async function init() {
             addDept()  
         }
         if (chosen.option === 'Add a role') {
-            console.log(5);
-            
+            addRole()   
         }
         if (chosen.option === 'Add an employee') {
             console.log(6);
@@ -108,9 +107,53 @@ async function addDept() {
         if (err) throw err;
                 console.log(`\n Added ${newDept.new_dept} to the database\n`);
                 init()
-    })
-    
-}
+    })  
+};
+
+async function addRole() {
+    const dept_names = await showListOfDepts();
+
+    let newRole = await inquirer.prompt([
+        {
+            name: 'new_role',
+            type: 'input',
+            message: 'What is the name of the role?'
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: 'What is the salary of the role? (numbers only)'
+        },
+        {
+            name: 'department',
+            type: 'list',
+            message: 'Which department does the role belong to?',
+            choices: dept_names
+        }
+    ])
+
+    const info = [newRole.new_role, newRole.salary, newRole.department]
+    db.query(`INSERT INTO role (title, salary, department_id) VALUES (?)`, info, (err,results) => {
+        if (err) throw err;
+                console.log(`\n Added ${newRole.new_role} to the database\n`);
+                init()
+    })  
+};
+
+async function showListOfDepts() {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT name FROM department`, (err,results) => {
+            if (err) reject (err);
+            else {
+                const dept_names = results.map(depts => depts.name)
+                resolve (dept_names)}
+        });
+    });
+};
+
+
+
+
 
 init()
 module.exports = init

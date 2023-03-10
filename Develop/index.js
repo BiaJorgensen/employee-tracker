@@ -32,20 +32,19 @@ async function init() {
             viewDepts(); 
         }
         if (chosen.option === 'View all roles') {
-            viewRoles()  
+            viewRoles();
         }
         if (chosen.option === 'View all employees') {
-            viewEmployees()
+            viewEmployees();
         }
         if (chosen.option === 'Add a department') {
-            addDept()  
+            addDept();  
         }
         if (chosen.option === 'Add a role') {
-            addRole()   
+            addRole(); 
         }
         if (chosen.option === 'Add an employee') {
-            console.log(6);
-            
+            addEmployee();
         }
         if (chosen.option === 'Update an employee role') {
             console.log(7);
@@ -56,10 +55,8 @@ async function init() {
             process.exit()
         }
 
-    }
-   
+};
 
-    
 function viewDepts() {
     db.query('SELECT id, name FROM department', (err, results) => {
         if (err) throw err;
@@ -164,7 +161,60 @@ async function deptNameToID(dept_name) {
         })
     })
 
-  }
+};
+
+async function addEmployee() {
+    const role_title = await showListOfRoles();
+    // const manager_name = await showListOfManagers();
+
+    let newEmployee = await inquirer.prompt([
+        {
+            name: 'first_name',
+            type: 'input',
+            message: "What is the employee's first name?"
+        },
+        {
+            name: 'last_name',
+            type: 'input',
+            message: "What is the employee's last name?"
+        },
+        {
+            name: 'role',
+            type: 'list',
+            message: "What is the employee's role?",
+            choices: role_title
+        }
+        // {
+        //     name: 'manager',
+        //     type: 'list',
+        //     message: "Who is the employee's manager?",
+        //     choices: manager_name
+        // }
+    ])
+
+    // const roleID = await roleNameToID(newEmployee.role_name);
+    // const managerID = await managerNameToID(newEmployee.manager_name);
+
+    const info = [newEmployee.first_name, newEmployee.last_name, roleID, managerID]
+
+    db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`, info, (err,results) => {
+        if (err) throw err;
+                console.log(`\n Added ${newEmployee.first_name} ${newEmployee.last_name} to the database\n`);
+                init()
+    })  
+};
+
+
+async function showListOfRoles() {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT title FROM role`, (err,results) => {
+            if (err) reject (err);
+            else {
+                const role_title = results.map(roles => roles.title)
+                resolve (role_title)}
+        });
+    });
+};
 
 
 

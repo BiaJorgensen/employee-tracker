@@ -191,9 +191,9 @@ async function addEmployee() {
             choices: manager_name
         }
     ])
-
-    const roleID = await roleTitleToID(newEmployee.role_title);
-    // const managerID = await managerNameToID(newEmployee.manager_name);
+    console.log(newEmployee.role);
+    const roleID = await roleTitleToID(newEmployee.role);
+    const managerID = await managerNameToID(newEmployee.manager);
 
     const info = [newEmployee.first_name, newEmployee.last_name, roleID, managerID]
 
@@ -241,10 +241,26 @@ async function showListOfManagers() {
     });
 };
 
+async function managerNameToID(manager_name) {
+    return new Promise ((resolve, reject) => {
+        const [first_name, last_name] = manager_name.split(' ');
+
+        db.query(`SELECT id FROM employee WHERE first_name = (?) AND last_name = (?)`, [first_name, last_name], (err,results) => {
+            if (err) reject (err);
+            else {
+                const manager_id = results[0].id;
+                console.log(manager_id)
+                resolve (manager_id)
+            }
+        })
+    })
+
+};
 
 
 
-  
+
+
 init()
 module.exports = init
 

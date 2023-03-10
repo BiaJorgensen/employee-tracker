@@ -165,7 +165,7 @@ async function deptNameToID(dept_name) {
 
 async function addEmployee() {
     const role_title = await showListOfRoles();
-    // const manager_name = await showListOfManagers();
+    const manager_name = await showListOfManagers();
 
     let newEmployee = await inquirer.prompt([
         {
@@ -183,13 +183,13 @@ async function addEmployee() {
             type: 'list',
             message: "What is the employee's role?",
             choices: role_title
+        },
+        {
+            name: 'manager',
+            type: 'list',
+            message: "Who is the employee's manager?",
+            choices: manager_name
         }
-        // {
-        //     name: 'manager',
-        //     type: 'list',
-        //     message: "Who is the employee's manager?",
-        //     choices: manager_name
-        // }
     ])
 
     const roleID = await roleTitleToID(newEmployee.role_title);
@@ -230,10 +230,21 @@ async function roleTitleToID(role_title) {
 
 };
 
+async function showListOfManagers() {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT CONCAT(first_name," ",last_name) FROM employee`, (err,results) => {
+            if (err) reject (err);
+            else {
+                const fullName = results.map(names => names['CONCAT(first_name," ",last_name)']);
+                resolve (fullName)}
+        });
+    });
+};
 
 
-roleTitleToID('Account Manager')
+
+
   
-// init()
+init()
 module.exports = init
 
